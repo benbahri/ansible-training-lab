@@ -1,0 +1,21 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: copy provisionning files
+      copy:
+        src: ['Vagrantfile', 'id_rsa', 'id_rsa.pub', 'setup.sh']
+        dest: /home/stagiaire/ansible/
+
+    - name: set hashicorp Repo
+      copy:
+        src: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+        dest: /etc/yum.repos.d/
+        remote_src: yes
+
+    - name: install yum-utils
+      yum:
+        name: "{{item}}"
+      loop:
+        - yum-utils
+        - vagrant
