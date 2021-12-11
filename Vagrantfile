@@ -8,7 +8,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do  |config|
   config.ssh.insert_key  =  false
   config.vm.synced_folder  ".",  "/vagrant"
   config.vm.provider  :virtualbox  do  |v|
-  	v.memory  =  1024
+  	#v.memory  =  1024
   	v.linked_clone  =  true
 	end
 
@@ -40,8 +40,20 @@ Vagrant.configure(VAGRANTFILE_API_VERSION)  do  |config|
 	#  Database  server.
 	config.vm.define  "db"  do  |db|
   	db.vm.hostname  =  "db.dev"
+    db.vm.box  =  "ubuntu/focal64"
   	db.vm.network  :private_network,  ip:  "192.168.60.6"
     db.vm.provision "shell", inline: $script_inject_pk
+	end
+
+  # Windows server 2016
+  config.vm.define  "win"  do  |win|
+  	win.vm.hostname  =  "win.dev"
+    win.vm.box = "gusztavvargadr/windows-server-2022-standard-core"
+  	win.vm.network  :private_network,  ip:  "192.168.60.10"
+    win.vm.provider  :virtualbox  do  |v|
+    	v.memory  =  4096
+      v.gui = true
+    end
 	end
 end
 

@@ -14,7 +14,7 @@ chmod 0400 /home/vagrant/.ssh/id_rsa
 wget https://releases.ansible.com/ansible-tower/setup/ansible-tower-setup-latest.tar.gz
 sudo tar xvzf ansible-tower-setup-latest.tar.gz
 cd ansible-tower-setup*
-sudo sed -i "s/admin_password=''/admin_password='admin't/g" inventory
+sudo sed -i "s/admin_password=''/admin_password='admin'/g" inventory
 sudo sed -i "s/pg_password=''/pg_password='admin'/g" inventory
 sudo ./setup.sh
 cd /tmp

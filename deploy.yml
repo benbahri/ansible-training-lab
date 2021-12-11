@@ -4,14 +4,34 @@
   tasks:
     - name: copy provisionning files
       copy:
-        src: ['Vagrantfile', 'id_rsa', 'id_rsa.pub', 'setup.sh']
+        src: "{{item}}"
         dest: /home/stagiaire/ansible/
+      loop:
+        - 'Vagrantfile'
+        - 'id_rsa'
+        - 'id_rsa.pub'
+        - 'setup.sh'
+
+    - name: install dnf package manager
+      yum:
+        name: dnf
+
+    - name: remove Virtualbox 5
+      dnf:
+        name: VirtualBox-5.1
+        state: absent
+
+    - name: Install Virtualbox 6
+      dnf:
+        name: VirtualBox-6.1
+        state: present
+
 
     - name: set hashicorp Repo
-      copy:
-        src: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+      get_url:
+        url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
         dest: /etc/yum.repos.d/
-        remote_src: yes
+        validate_certs: false
 
     - name: install yum-utils
       yum:
