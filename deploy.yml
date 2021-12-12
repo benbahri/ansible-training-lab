@@ -15,7 +15,6 @@
 
     - name: setup VirtualBox
       block:
-      become: yes
       - name: install dnf package manager
         yum:
           name: dnf
@@ -31,10 +30,10 @@
           state: present
         notify:
           - reboot VMs
+      become: yes
 
     - name: setup vagrant
       block:
-      become: yes
       - name: set hashicorp Repo
         get_url:
           url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
@@ -47,7 +46,8 @@
         loop:
           - yum-utils
           - vagrant
-
+      become: yes
+      
     - name: create infrastructure
       shell:
         chdir: /home/stagiaire/ansible
