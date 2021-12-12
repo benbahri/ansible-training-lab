@@ -1,41 +1,60 @@
 ---
 - hosts: all
-  become: yes
   tasks:
     - name: copy provisionning files
       copy:
         src: "{{item}}"
         dest: /home/stagiaire/ansible/
+        owner: stagiaire
+        group: stagiaire
       loop:
         - 'Vagrantfile'
         - 'id_rsa'
         - 'id_rsa.pub'
         - 'setup.sh'
 
-    - name: install dnf package manager
-      yum:
-        name: dnf
+    - name: setup VirtualBox
+      block:
+      become: yes
+      - name: install dnf package manager
+        yum:
+          name: dnf
 
-    - name: remove Virtualbox 5
-      dnf:
-        name: VirtualBox-5.1
-        state: absent
+      - name: remove Virtualbox 5
+        dnf:
+          name: VirtualBox-5.1
+          state: absent
 
-    - name: Install Virtualbox 6
-      dnf:
-        name: VirtualBox-6.1
-        state: present
+      - name: Install Virtualbox 6
+        dnf:
+          name: VirtualBox-6.1
+          state: present
+        notify:
+          - reboot VMs
 
+    - name: setup vagrant
+      block:
+      become: yes
+      - name: set hashicorp Repo
+        get_url:
+          url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+          dest: /etc/yum.repos.d/
+          validate_certs: false
 
-    - name: set hashicorp Repo
-      get_url:
-        url: https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
-        dest: /etc/yum.repos.d/
-        validate_certs: false
+      - name: install vagrant
+        yum:
+          name: "{{item}}"
+        loop:
+          - yum-utils
+          - vagrant
 
-    - name: install yum-utils
-      yum:
-        name: "{{item}}"
-      loop:
-        - yum-utils
-        - vagrant
+    - name: create infrastructure
+      shell:
+        chdir: /home/stagiaire/ansible
+        cmd: vagrant up
+
+  handlers:
+  - name: reboot VMs
+    become: yes
+    shell:
+      cmd: reboot

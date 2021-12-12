@@ -1,0 +1,1 @@
+10.33.135.[100:115] ansible_ssh_pass=Azerty01 ansible_become_pass=Azerty01
